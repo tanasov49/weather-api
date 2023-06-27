@@ -7,9 +7,9 @@ class Product
     private $table_name = "countries";
 
     // свойства объекта
+    public $fk_country_id;
     public $country_id;
     public $country;
-    public $fk_country_id;
     public $city_id;
     public $city;
     public $lat;
@@ -37,7 +37,7 @@ class Product
     $stmt->execute();
     return $stmt;
 }
-function readOne()
+function readOne($fk_country_id)
 {
     // запрос для чтения одной записи (товара)
     
@@ -49,7 +49,8 @@ function readOne()
             
     // подготовка запроса
     $stmt = $this->conn->prepare($query);
-
+    $fk_country_id = htmlspecialchars(strip_tags($fk_country_id));
+    $fk_country_id = "%{$fk_country_id}%";
     // привязываем id товара, который будет получен
     $stmt->bindParam(1, $this->fk_country_id);
 
@@ -57,14 +58,7 @@ function readOne()
     $stmt->execute();
 
     // получаем извлеченную строку
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    // установим значения свойств объекта
-    
-    $this->city = $row["city"];
-    $this->lat = $row["lat"];
-    $this->lng = $row["lng"];
-    $this->city_id = $row["city_id"];
+    return $stmt;
 
 }
 

@@ -13,20 +13,23 @@ include_once "../objects/countries.php";
 $database = new Database();
 $db = $database->getConnection();
 $product = new Product($db);
-$product->fk_country_id = isset($_GET["country_id"]) ? $_GET["country_id"] : die();
-$product->readOne();
+$product -> $fk_country_id = isset($_GET["country_id"]) ? $_GET["country_id"] : die();
+$stmt = $product->readOne($fk_country_id);
+$num = $stmt->rowCount();
 
-
-
-if ($product->fk_country_id != null) {
+if ($num > 0) {
     $product_arr = array();
     // создание массива
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        extract($row);
         $product_item = array(
-            "city_id" =>  $product->city_id,
-            "city" => $product->city,
-            "lat" => $product->lat,
-            "lng" => $product->lng,
+            "city_id" => $product -> $city_id,
+            "city" => $product -> $city,
+            "lat" => $product -> $lat,
+            "lng" => $product -> $lng,
         );
+    }
+
         array_push($product_arr, $product_item);
     
     // код ответа - 200 OK
