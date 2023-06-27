@@ -17,7 +17,7 @@ $product = new Product($db);
  
 // чтение товаров будет здесь
 // запрашиваем товары
-$stmt = $product->read();
+$stmt = $product->readCountries();
 $num = $stmt->rowCount();
 
 // проверка, найдено ли больше 0 записей

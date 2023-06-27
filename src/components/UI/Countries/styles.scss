@@ -2,18 +2,19 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    &__button {
-        @include fontStyle(26px, 500, $colorTitle, 28px);
-        cursor: pointer;
-        margin: 20px 0 ;
-        padding: 10px;
-        border: none;
-    }
 }
-.countries {
+.button-selected {
+    @include fontStyle(26px, 500, $colorTitle, 28px);
+    cursor: pointer;
+    margin: 20px 0 ;
+    padding: 10px;
+    border: none;
+}
+.popup-container {
     position: absolute;
     top: 25%;
     left: 50%;
+    width: 300px;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
@@ -25,7 +26,7 @@
     overflow-x: hidden;
     background: rgb(90, 229, 160);
 }
-.popup-countries {
+.popup {
     position: fixed;
     top: 0;
     background: rgb(241, 237, 237);
@@ -41,3 +42,4 @@
         z-index: 5;
     }
 }
+

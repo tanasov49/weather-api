@@ -1,84 +1,125 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import "./styles.scss";
+import { ModalContext } from "../../../context/ModalContext";
 interface ICountry {
-    country: string,
-    country_id: string
+    country: string;
+    country_id: number;
+}
+interface IStates {
+    state: string;
+    state_id: number;
 }
 function Countries() {
-    const defaultCountries:ICountry = {
-        country: '',
-        country_id: ''
-    }
-    const [countries, setCountries] = useState([]);
+    const {countries, country, handleCountryClick, handleCountries} = useContext(ModalContext);
+
+    const defaultStates: IStates = {
+        state: "",
+        state_id: 0,
+    };
+
     const [selectCountry, setSelectCountry] = useState<boolean>(false);
-    const [country, setCountry] = useState(defaultCountries);
-    const handleCountryClick = (item: any) => {
-        setCountry(item);
-        setSelectCountry(false);
-        getCities(item.country_id);
-    }
-    const getCities = (city: number) => {
-        console.log(city);
-        fetch(`http://localhost:90/api/product/read_one.php?country_id=${city}` + '&action=1',  {
-            method: 'GET',
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            
-        })
-        .then((response) => response.json())
-        .then((respose) => {
-            console.log(respose)
-        });
-        
-    }
-    useEffect(() => {
-        fetch("http://localhost:90/api/product/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: JSON.stringify({ action: 1 }),
-        })
+    const [states, setStates] = useState([]);
+    const [selectState, setSelectState] = useState<boolean>(false);
+
+    const handleStates = () => {
+        if (!selectState) {
+            setSelectState(true);
+        } else {
+            setSelectState(false);
+        }
+    };
+    const getStates = (country: number) => {
+        fetch(
+            `http://localhost:90/api/states/?country_id=${country}` +
+                "&action=1",
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            }
+        )
             .then((response) => response.json())
             .then((respose) => {
-                setCountries(respose);
+                setStates(respose);
             });
-    },[])
-    const handleCountries = () => {
-        if (!selectCountry) {
-            setSelectCountry(true);
-        } 
-        else {
-            setSelectCountry(false)
-        };
-
     };
-    const rootRef = useRef<HTMLUListElement>(null)
+
+    const rootRefCountry = useRef<HTMLUListElement>(null);
+    const rootRefState = useRef<HTMLUListElement>(null);
     useEffect(() => {
         const handleClickOutSide = (e: MouseEvent) => {
-            if (setSelectCountry && rootRef.current && !rootRef.current.contains(e.target as Node)) {
-                setSelectCountry(false)
-            } 
-          }
-        document.addEventListener('mousedown', handleClickOutSide)
+            if (
+                (setSelectCountry &&
+                    rootRefCountry.current &&
+                    !rootRefCountry.current.contains(e.target as Node))
+            ) {
+                setSelectCountry(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutSide);
         return () => {
-          document.removeEventListener('mousedown', handleClickOutSide)
-        }
-      },[selectCountry])
+            document.removeEventListener("mousedown", handleClickOutSide);
+        };
+    }, [selectCountry]);
+    useEffect(() => {
+        const handleClickOutSide = (e: MouseEvent) => {
+            if (
+                (setSelectState &&
+                    rootRefState.current &&
+                    !rootRefState.current.contains(e.target as Node))
+            ) {
+                setSelectState(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutSide);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutSide);
+        };
+    }, [selectState]);
+    console.log(states);
     return (
         <div className="country">
-            <button type="button" className="country__button" onClick={handleCountries}>
+            <button
+                type="button"
+                className="button-selected"
+                onClick={handleCountries}
+            >
                 Select country
             </button>
-            <div className={selectCountry ? 'popup-countries popup-countries_active' : 'popup-countries'}>
-                <ul ref={rootRef} className="countries">
+            <div className={selectCountry ? "popup popup_active" : "popup"}>
+                <ul ref={rootRefCountry} className="popup-container">
                     {countries.map((item) => (
-                        <li onClick={() => handleCountryClick(item)} key={item["country_id"]}>{item["country"]}</li>
+                        <li
+                            onClick={() => handleCountryClick(item)}
+                            key={item["country_id"]}
+                        >
+                            {item["country"]}
+                        </li>
                     ))}
                 </ul>
             </div>
-            <h3>{country ? `Select country: ${country.country}` : ''}</h3>
+            <h3>{country ? `Selected country: ${country.country}` : ""}</h3>
+            {country.country && (
+                <>
+                    <button
+                        type="button"
+                        className="button-selected"
+                        onClick={handleStates}
+                    >
+                        Select state
+                    </button>
+                    <div
+                        className={selectState ? "popup popup_active" : "popup"}
+                    >
+                        <ul ref={rootRefState} className="popup-container">
+                            {states.map((item) => (
+                                <li key={item["state_id"]}>{item["state"]}</li>
+                            ))}
+                        </ul>
+                    </div>
+                </>
+            )}
         </div>
     );
 }
