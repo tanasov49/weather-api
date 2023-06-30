@@ -9,6 +9,9 @@ class Product
     // свойства объекта
     public $country_id;
     public $country;
+    public $latitude;
+    public $longitude;
+    public $state_boolean;
     
     // конструктор для соединения с базой данных
     public function __construct($db)
@@ -20,8 +23,7 @@ class Product
 {
     // выбираем все записи
     $query = "SELECT
-        country, country_id
-    FROM
+        country, country_id, latitude, longitude, state_boolean FROM
         " . $this->table_name . " ";
 
     // подготовка запроса

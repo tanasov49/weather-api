@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import "./styles.scss";
+
 interface ICountry {
     country: string;
     country_id: number;
@@ -10,25 +11,16 @@ interface IStates {
 }
 function Countries() {
 
-    const defaultCountries: ICountry = {
-        country: "",
-        country_id: 0,
-    };
+
     const defaultStates: IStates = {
         state: "",
         state_id: 0,
     };
-    const [countries, setCountries] = useState([]);
+
     const [selectCountry, setSelectCountry] = useState<boolean>(false);
-    const [country, setCountry] = useState(defaultCountries);
     const [states, setStates] = useState([]);
     const [selectState, setSelectState] = useState<boolean>(false);
 
-    const handleCountryClick = (item: any) => {
-        setCountry(item);
-        setSelectCountry(false);
-        getStates(item.country_id);
-    };
     const handleStates = () => {
         if (!selectState) {
             setSelectState(true);
@@ -52,26 +44,7 @@ function Countries() {
                 setStates(respose);
             });
     };
-    useEffect(() => {
-        fetch("http://localhost:90/api/countries/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: JSON.stringify({ action: 1 }),
-        })
-            .then((response) => response.json())
-            .then((respose) => {
-                setCountries(respose);
-            });
-    }, []);
-    const handleCountries = () => {
-        if (!selectCountry) {
-            setSelectCountry(true);
-        } else {
-            setSelectCountry(false);
-        }
-    };
+
     const rootRefCountry = useRef<HTMLUListElement>(null);
     const rootRefState = useRef<HTMLUListElement>(null);
     useEffect(() => {

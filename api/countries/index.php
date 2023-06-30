@@ -31,7 +31,10 @@ if ($num > 0) {
         extract($row);
         $product_item = array(
             "country" => $country,
-            "country_id" => $country_id,
+            "country_id" => (int)$country_id,
+            "latitude" => $latitude,
+            "longitude" => $longitude,
+            "state_boolean" => (bool)$state_boolean
         );
         array_push($products_arr, $product_item);
     }

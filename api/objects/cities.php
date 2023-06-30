@@ -1,49 +1,45 @@
 <?php
+
 class Product
 {
     // подключение к базе данных и таблице "products"
     private $conn;
-    private $table_name = "cities";
+    private $table_name = "countries";
+    private $table_name2 = "states";
+    private $table_name3 = 'cities';
 
-    // свойства объекта
     public $city_id;
     public $city;
-    public $lat;
-    public $lng;
-    public $id
-
+    public $latitude;
+    public $longitude;
+    
     // конструктор для соединения с базой данных
     public function __construct($db)
     {
         $this->conn = $db;
     }
 
-    // здесь будет метод read()
-    function readOne()
+function readCities($fk_state_id)
 {
-    // выбираем все записи
-    $query = "SELECT
-        city_id, city, lat, lng
-    FROM
-        " . $this->table_name . " 
-    where fk_country_id = ?   
-        ";
-
+    // запрос для чтения одной записи (товара)
+    
+    $query = "SELECT 
+                city, city_id, " . $this->table_name3 . ".latitude, " . $this->table_name3 . ".longitude
+        FROM
+            " . $this->table_name2 . "
+            INNER JOIN " . $this->table_name3 . " ON state_id = fk_state_id WHERE fk_state_id = $fk_state_id ORDER BY city ASC";
+            
     // подготовка запроса
     $stmt = $this->conn->prepare($query);
-    $stmt->bindParam(1, $this->id);
+
+    // привязываем id товара, который будет получен
+
+    // выполняем запрос
     $stmt->execute();
 
     // получаем извлеченную строку
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $stmt;
 
-    // установим значения свойств объекта
-    $this->city = $row["city"];
-    $this->city_id = $row["city_id"];
-    $this->lat = $row["lat"];
-    $this->lng = $row["lng"];
-    $this->id = $row["id"];
 }
-
 
 }

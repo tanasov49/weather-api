@@ -8,24 +8,23 @@ header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 // подключение файла для соединения с базой и файл с объектом
 include_once "../config/database.php";
-include_once "../objects/states.php";
+include_once "../objects/cities.php";
 $database = new Database();
 $db = $database->getConnection();
 $product = new Product($db);
-$fk_country_id = isset($_GET["country_id"]) ? $_GET["country_id"] : die();
-$stmt = $product->readStates($fk_country_id);
+$fk_state_id = isset($_GET["state_id"]) ? $_GET["state_id"] : die();
+$stmt = $product->readCities($fk_state_id);
 $num = $stmt->rowCount();
 
-if ($num > 0 && $fk_country_id != null) {
+if ($num > 0 && $fk_state_id != null) {
     $product_arr = array();
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         extract($row);
         $product_item = array(
-            "state_id" => (int)$state_id,
-            "state" => $state,
+            "city_id" => (int)$city_id,
+            "city" => (string)$city,
             "latitude" => $latitude,
             "longitude" => $longitude,
-            "city_boolean" => (bool)$city_boolean
         );
         array_push($product_arr, $product_item);
     }
