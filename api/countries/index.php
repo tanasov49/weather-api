@@ -1,22 +1,19 @@
 <?php
-
 // необходимые HTTP-заголовки
 header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-
+header("Access-Control-Allow-Headers: access");
+header("Access-Control-Allow-Methods: GET");
+header("Access-Control-Allow-Credentials: true");
+header("Content-Type: application/json");
 // подключение базы данных и файл, содержащий объекты
 include_once "../config/database.php";
 include_once "../objects/countries.php";
-
 // получаем соединение с базой данных
 $database = new Database();
 $db = $database->getConnection();
-
 // инициализируем объект
 $product = new Product($db);
- 
-// чтение товаров будет здесь
-// запрашиваем товары
+// запрашиваем данные
 $stmt = $product->readCountries();
 $num = $stmt->rowCount();
 
@@ -25,7 +22,6 @@ if ($num > 0) {
     // массив товаров
     $products_arr = array();
     // получаем содержимое нашей таблицы
-    // fetch() быстрее, чем fetchAll()
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         // извлекаем строку
         extract($row);
@@ -38,7 +34,6 @@ if ($num > 0) {
         );
         array_push($products_arr, $product_item);
     }
-
     // устанавливаем код ответа - 200 OK
     http_response_code(200);
 
@@ -52,5 +47,5 @@ else {
     http_response_code(404);
 
     // сообщаем пользователю, что товары не найдены
-    echo json_encode(array("message" => "Товары не найдены."), JSON_UNESCAPED_UNICODE);
+    echo json_encode(array("message" => "Данные не найдены"), JSON_UNESCAPED_UNICODE);
 }

@@ -35,7 +35,7 @@ if ($num > 0 && $fk_state_id != null) {
 } else {
     // код ответа - 404 Не найдено
     http_response_code(404);
-    // сообщим пользователю, что такой товар не существует
+    // сообщим пользователю, что данных не существует
     echo json_encode(array("message" => "Data is empty"), JSON_UNESCAPED_UNICODE);
     
 }

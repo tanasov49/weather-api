@@ -2,7 +2,7 @@
 
 class Product
 {
-    // подключение к базе данных и таблице "products"
+    // подключение к базе данных
     private $conn;
     private $table_name = "countries";
     private $table_name2 = "states";
@@ -12,7 +12,6 @@ class Product
     public $city;
     public $latitude;
     public $longitude;
-    
     // конструктор для соединения с базой данных
     public function __construct($db)
     {
@@ -21,7 +20,7 @@ class Product
 
 function readCities($fk_state_id)
 {
-    // запрос для чтения одной записи (товара)
+    // запрос для чтения записи городов
     
     $query = "SELECT 
                 city, city_id, " . $this->table_name3 . ".latitude, " . $this->table_name3 . ".longitude
@@ -31,12 +30,8 @@ function readCities($fk_state_id)
             
     // подготовка запроса
     $stmt = $this->conn->prepare($query);
-
-    // привязываем id товара, который будет получен
-
     // выполняем запрос
     $stmt->execute();
-
     // получаем извлеченную строку
     return $stmt;
 

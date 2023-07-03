@@ -1,46 +1,31 @@
 import React, { createContext, useEffect, useRef, useState } from "react";
-interface IModalContext {
-    countries: any;
-    country: [];
-    states: any;
-    stateVal: {};
-    handleCountryClick: (item: any) => void;
-    handleCountries: () => void;
-    selectCountry: boolean;
-    rootRefCountries: any;
-    rootRefState: any;
-    selectStateVal: boolean;
-    handleStates: () => void;
-    handleStateClick: (item: any) => void;
-}
+import { IModalContext, ICoordinates } from "../interfaces/interfaces";
+import {defaultCoordinates,  defaultStates, defaultCities, defaultCountries} from "../defaults/defaults";
+
 export const ModalContext = createContext<IModalContext>({
     countries: [],
-    country: [],
+    country: defaultCountries,
     states: [],
-    stateVal: Array,
+    stateVal: defaultStates,
+    cities: [],
+    city: defaultCities,
+    selectCity: false,
     handleCountryClick: () => {},
     handleCountries: () => {},
     selectCountry: false,
     rootRefCountries: null,
     rootRefState: null,
+    rootRefCity: null,
     selectStateVal: false,
     handleStates: () => {},
     handleStateClick: () => {},
+    handleCities: () => {},
+    handleCityClick: () => {},
+    coordinates: defaultCoordinates,
+    handleWeatherApi: () => {},
+    weather: {},
+    temperature: {}
 });
-interface ICountries {
-    country: string;
-    country_id: number;
-    latitude: number;
-    longitude: number;
-    state_boolean: boolean;
-}
-interface IStates {
-    state: string;
-    state_id: string;
-    latitude: number;
-    longitude: number;
-    city_boolean: boolean;
-}
 interface ICities {
     city: string;
     city_id: number;
@@ -49,26 +34,6 @@ interface ICities {
 }
 export const ModalState = ({ children }: { children: React.ReactNode }) => {
     const urlFetch: string = "http://localhost:90/api";
-    const defaultCountries: ICountries = {
-        country: "",
-        country_id: 0,
-        latitude: 0,
-        longitude: 0,
-        state_boolean: false,
-    };
-    const defaultStates: IStates = {
-        state: "",
-        state_id: "",
-        latitude: 0,
-        longitude: 0,
-        city_boolean: false,
-    };
-    const defaultCities:ICities = {
-        city: '',
-        city_id: 0,
-        latitude: 0,
-        longitude: 0
-    }
     useEffect(() => {
         fetch(`${urlFetch}/countries/`, {
             method: "POST",
@@ -80,7 +45,6 @@ export const ModalState = ({ children }: { children: React.ReactNode }) => {
             .then((response) => response.json())
             .then((respose) => {
                 setCountries(respose);
-                console.log(respose);
             });
     }, []);
     const [countries, setCountries] = useState([]);
@@ -91,9 +55,22 @@ export const ModalState = ({ children }: { children: React.ReactNode }) => {
     const [selectStateVal, setSelectStateVal] = useState<boolean>(false);
     const [cities, setCities] = useState([]);
     const [city, setCity] = useState(defaultCities);
+    const [selectCity, setSelectCity] = useState<boolean>(false);
+    const [coordinates, setCoordinates] = useState(defaultCoordinates);
+    const [weather, setWeather] = useState([])
+    const [temperature, setTemperature] = useState([])
+    const handleCoordinates = (item: ICoordinates) => {
+        setCoordinates({
+            latitude: item.latitude,
+            longitude: item.longitude
+        })
+    };
     const handleCountryClick = (item: any) => {
         handleCountries();
         setCountry(item);
+        setStateVal(defaultStates);
+        handleCoordinates(item);
+        handleWeatherApi(coordinates.latitude, coordinates.longitude);
         if (item.state_boolean) {
             getStates(item.country_id);
         }
@@ -108,6 +85,9 @@ export const ModalState = ({ children }: { children: React.ReactNode }) => {
     const handleStateClick = (item: any) => {
         handleStates();
         setStateVal(item);
+        setCity(defaultCities);
+        handleCoordinates(item);
+        handleWeatherApi(coordinates.latitude, coordinates.longitude);
         if (item.city_boolean) {
             getCities(item.state_id);
         }
@@ -119,7 +99,19 @@ export const ModalState = ({ children }: { children: React.ReactNode }) => {
             setSelectStateVal(false);
         }
     };
-
+    const handleCities = () => {
+        if (!selectCity) {
+            setSelectCity(true);
+        } else {
+            setSelectCity(false);
+        }
+    };
+    const handleCityClick = (item: ICities) => {
+        handleCities();
+        setCity(item);
+        handleCoordinates(item);
+        handleWeatherApi(coordinates.latitude, coordinates.longitude);
+    };
     const rootRefCountries = useRef<HTMLUListElement>(null);
     useEffect(() => {
         const handleClickOutSide = (e: MouseEvent) => {
@@ -146,14 +138,13 @@ export const ModalState = ({ children }: { children: React.ReactNode }) => {
             .then((response) => response.json())
             .then((respose) => {
                 setStates(respose);
-                console.log(respose);
             });
     };
     const rootRefState = useRef<HTMLUListElement>(null);
     useEffect(() => {
         const handleClickOutSide = (e: MouseEvent) => {
             if (
-                setSelectStateVal &&
+                selectStateVal &&
                 rootRefState.current &&
                 !rootRefState.current.contains(e.target as Node)
             ) {
@@ -165,6 +156,16 @@ export const ModalState = ({ children }: { children: React.ReactNode }) => {
             document.removeEventListener("mousedown", handleClickOutSide);
         };
     }, [selectStateVal]);
+    const handleWeatherApi = (lat: number, lon: number) => {
+        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=d807e15c397cc3b68b5c64ef1bd87d46`)
+        .then((response) => response.json())
+        .then((respose) => {
+            setWeather(respose.weather[0]);
+            setTemperature(respose.main)
+        });
+    }
+    console.log(temperature)
+    console.log(weather)
     const getCities = (state: number) => {
         fetch(`${urlFetch}/cities/?state_id=${state}` + "&action=1", {
             method: "GET",
@@ -177,7 +178,22 @@ export const ModalState = ({ children }: { children: React.ReactNode }) => {
                 setCities(respose);
             });
     };
-    console.log(cities)
+    const rootRefCity = useRef<HTMLUListElement>(null);
+    useEffect(() => {
+        const handleClickOutSide = (e: MouseEvent) => {
+            if (
+                selectCity &&
+                rootRefCity.current &&
+                !rootRefCity.current.contains(e.target as Node)
+            ) {
+                setSelectCity(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutSide);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutSide);
+        };
+    }, [selectCity]);
     return (
         <ModalContext.Provider
             value={{
@@ -193,6 +209,16 @@ export const ModalState = ({ children }: { children: React.ReactNode }) => {
                 selectStateVal,
                 handleStates,
                 handleStateClick,
+                cities,
+                city,
+                selectCity,
+                handleCities,
+                handleCityClick,
+                rootRefCity,
+                coordinates,
+                handleWeatherApi,
+                weather,
+                temperature
             }}
         >
             {children}

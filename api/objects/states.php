@@ -2,7 +2,6 @@
 
 class Product
 {
-    // подключение к базе данных и таблице "products"
     private $conn;
     private $table_name = "countries";
     private $table_name2 = "states";
@@ -21,8 +20,7 @@ class Product
 
 function readStates($fk_country_id)
 {
-    // запрос для чтения одной записи (товара)
-    
+    // запрос для чтения записей штатов или округов
     $query = "SELECT 
                 state, state_id, " . $this->table_name2 . ".latitude, " . $this->table_name2 . ".longitude, city_boolean
         FROM
@@ -31,8 +29,6 @@ function readStates($fk_country_id)
             
     // подготовка запроса
     $stmt = $this->conn->prepare($query);
-
-    // привязываем id товара, который будет получен
 
     // выполняем запрос
     $stmt->execute();

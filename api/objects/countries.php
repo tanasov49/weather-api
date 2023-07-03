@@ -2,10 +2,8 @@
 
 class Product
 {
-    // подключение к базе данных и таблице "products"
     private $conn;
     private $table_name = "countries";
-
     // свойства объекта
     public $country_id;
     public $country;
