@@ -1,0 +1,9 @@
+.footer {
+    background: $bcgFooter;
+    display: flex;
+    justify-content: center;
+    &__description {
+        margin: 0;
+        padding: 40px 0;
+    }
+}

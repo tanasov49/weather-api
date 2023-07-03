@@ -4,8 +4,8 @@ class Database
     // укажите свои учетные данные базы данных
     private $host = "localhost";
     private $db_name = "countries_cities";
-    private $username = "tanasov";
-    private $password = "megafon49";
+    private $username = "username";
+    private $password = "password";
     public $conn;
 
     // получаем соединение с БД

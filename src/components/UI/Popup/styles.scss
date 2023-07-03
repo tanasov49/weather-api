@@ -33,15 +33,33 @@
         list-style-type: none;
         margin: 0;
         padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
         &__item {
             @include fontStyle(18px, 400, $colorItem, 20px);
+            background: $bcgItem;
+            transition: background 0.7s;
+            cursor: pointer;
+            &:hover {
+                background: $bcgItemHover;
+            }
         }
     }
 }
-.button-select {
-    @include fontStyle(26px, 500, $colorTitle, 28px);
-    cursor: pointer;
-    margin: 20px 0 ;
-    padding: 10px;
-    border: none;
+.block-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    &__title {
+        margin: 10px 0 20px 0;
+        @include titleBlock;
+    }
+    &__button-select {
+        @include btnSelect;
+        margin: 20px 0;
+        padding: 10px 20px;
+        min-width: 225px;
+    }
 }
+

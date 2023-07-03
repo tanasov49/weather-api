@@ -4,3 +4,17 @@
     color: $cs;
     line-height: $lh;
 }
+@mixin btnSelect {
+    @include fontStyle(26px, 500, $colorBtn, 28px);
+    cursor: pointer;
+    border: none;
+    background: $bcgBtn;
+    transition: background 0.7s;
+    border-radius: 40px;
+    &:hover {
+        background: $bcgBtnHover;
+    }
+}
+@mixin titleBlock {
+    @include fontStyle(32px, 700, #af5757, 34px);
+}

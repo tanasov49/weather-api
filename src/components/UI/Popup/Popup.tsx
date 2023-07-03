@@ -10,15 +10,15 @@ interface IPopup {
 }
 function Popup({ children, selectPopup, refPopup, clickList, textButton, titlePopup}: IPopup) {
     return (
-        <>
-            <h2 className="title-active">{titlePopup}</h2>
-            <button onClick={clickList} className="button-select" type="button">{textButton}</button>
+        <div className="block-list">
+            <h2 className="block-list__title">{titlePopup}</h2>
+            <button onClick={clickList} className="block-list__button-select" type="button">{textButton}</button>
             <div className={selectPopup ? "popup popup_active" : "popup"}>
                 <div ref={refPopup} className="popup-container">
                     {children}
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 
