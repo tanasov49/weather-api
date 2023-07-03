@@ -3,8 +3,8 @@ class Database
 {
     // укажите свои учетные данные базы данных
     private $host = "localhost";
-    private $db_name = "countries_cities";
-    private $username = "username";
+    private $db_name = "database";
+    private $username = "user";
     private $password = "password";
     public $conn;
 
